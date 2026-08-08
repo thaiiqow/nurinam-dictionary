@@ -14,6 +14,7 @@
             --text-bright: #ffffff;
             --text-muted: #8b949e;
             --border: #30363d;
+            --tag-bg: #21262d;
         }
 
         * {
@@ -130,25 +131,22 @@
             margin-bottom: 16px;
             color: var(--text-muted);
             font-size: 0.95rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .dictionary-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 16px;
         }
 
         .word-card {
             background-color: var(--card-bg);
-            padding: 16px 20px;
-            border-radius: 8px;
+            padding: 20px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 10px;
             transition: border-color 0.2s;
         }
 
@@ -159,18 +157,40 @@
         .word-header {
             display: flex;
             align-items: baseline;
-            gap: 12px;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
         }
 
         .word-title {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             font-weight: bold;
             color: var(--accent);
         }
 
         .word-translation {
             color: var(--text-bright);
-            font-size: 1.05rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .word-description {
+            color: var(--text-main);
+            font-size: 0.98rem;
+            line-height: 1.5;
+        }
+
+        .word-forms {
+            background: var(--tag-bg);
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px dotted var(--border);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .word-forms strong {
+            color: var(--text-main);
         }
 
         .no-results {
@@ -189,15 +209,15 @@
 <div class="container">
     <header>
         <h1>Официальный словарь Нуринамского языка</h1>
-        <p class="subtitle">Полный указатель букв и онлайн-поиск по словам и переводу</p>
+        <p class="subtitle">Полная справочная система, формы слов и алфавитный поиск</p>
     </header>
 
     <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="Поиск (введите слово на нуринамском или русском)...">
+        <input type="text" id="searchInput" class="search-input" placeholder="Поиск по словам, переводу или описанию...">
     </div>
 
     <div class="alphabet-section">
-        <div class="alphabet-title">Нажмите на букву для фильтрации:</div>
+        <div class="alphabet-title">Фильтр по первой букве:</div>
         <div class="alphabet-bar" id="alphabetBar">
             <button class="letter-btn reset-btn" onclick="resetFilter()">Все слова</button>
         </div>
@@ -211,7 +231,7 @@
 </div>
 
 <script>
-    // Полный алфавит нуринамского языка
+    // Алфавит
     const alphabet = [
         "А", "Ӑ", "Ꙗ", "Ћ", "V", "Г", "Ґ", "Ѓ", "Д", "Ԭ", 
         "Ѥ", "Ѥ̆", "Ĭ", "Э", "Э̆", "З", "Ҙ", "Ж", "Җ", "Ӝ", 
@@ -222,30 +242,31 @@
         "Ъ", "Ы", "Ꙑ", "Ы̆", "Ӹ", "Ь", "Ѣ", "Ъ̀", "Ԃ", "Һ", "Ԧ"
     ];
 
-    // База данных слов нуринамского языка
-    // Пополняйте этот список своими словами!
+    // База данных слов с описанием и формами изменения
     const dictionary = [
-        { word: "Аҙа", translation: "улица" },
-        { word: "Арам", translation: "приветствие, мир" },
-        { word: "Ӑн", translation: "день, светлое время" },
-        { word: "Ꙗра", translation: "земля, территория" },
-        { word: "Ћор", translation: "город, столица" },
-        { word: "Vита", translation: "жизнь, энергия" },
-        { word: "Гал", translation: "река, вода" },
-        { word: "Ґури", translation: "ветер" },
-        { word: "Дон", translation: "дом, здание" },
-        { word: "Ԭимар", translation: "утренний свет" },
-        { word: "Эн", translation: "человек" },
-        { word: "Зур", translation: "гора" },
-        { word: "Ҙор", translation: "улица, проспект" },
-        { word: "Jор", translation: "закон, правило" },
-        { word: "Qис", translation: "ночь, темнота" },
-        { word: "Ш̆ум", translation: "шелест ветра" }
+        { 
+            word: "Аҙа", 
+            translation: "Улица",
+            description: "Элемент городской инфраструктуры. Пространство между двумя рядами зданий для движения транспорта и пешеходов в населённых пунктах Нуринама.",
+            forms: "ед.ч.: Аҙа | мн.ч.: Аҙалар | род.падеж: Аҙаның | местн.падеж: Аҙада"
+        },
+        { 
+            word: "Ћор", 
+            translation: "Город / Столица",
+            description: "Крупный населённый пункт, имеющий административный, промышленный и культурный статус. Понятие также применяется к Нуринаму.",
+            forms: "ед.ч.: Ћор | мн.ч.: Ћорлар | винит.падеж: Ћорды"
+        },
+        { 
+            word: "Aрам", 
+            translation: "Приветствие / Мир",
+            description: "Традиционное нуринамское слово для пожелания добра, мира и благополучия при встрече.",
+            forms: "глагольная форма: Арамлаа (приветствовать)"
+        }
     ];
 
     let activeLetter = null;
 
-    // Генерируем кнопки алфавита
+    // Генерация кнопок алфавита
     const alphabetBar = document.getElementById('alphabetBar');
     alphabet.forEach(letter => {
         const btn = document.createElement('button');
@@ -255,7 +276,7 @@
         alphabetBar.appendChild(btn);
     });
 
-    // Функция отображения карточек со словами
+    // Функция отрисовки словаря
     function renderDictionary(data) {
         const list = document.getElementById('dictionaryList');
         const statusBar = document.getElementById('statusBar');
@@ -268,23 +289,30 @@
             return;
         }
 
-        // Сортировка по нуринамскому слову
+        // Сортировка по алфавиту
         data.sort((a, b) => a.word.localeCompare(b.word));
 
         data.forEach(item => {
             const card = document.createElement('div');
             card.className = 'word-card';
+            
+            // Проверка наличия дополнительных полей
+            const descHtml = item.description ? `<div class="word-description">${item.description}</div>` : '';
+            const formsHtml = item.forms ? `<div class="word-forms"><strong>Формы слова:</strong> ${item.forms}</div>` : '';
+
             card.innerHTML = `
                 <div class="word-header">
                     <span class="word-title">${item.word}</span>
+                    <span class="word-translation">— ${item.translation}</span>
                 </div>
-                <div class="word-translation">— ${item.translation}</div>
+                ${descHtml}
+                ${formsHtml}
             `;
             list.appendChild(card);
         });
     }
 
-    // Двуязычный поиск по поисковой строке
+    // Сквозной поиск
     document.getElementById('searchInput').addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
         
@@ -295,13 +323,14 @@
 
         const filtered = dictionary.filter(item => 
             item.word.toLowerCase().includes(query) || 
-            item.translation.toLowerCase().includes(query)
+            item.translation.toLowerCase().includes(query) ||
+            (item.description && item.description.toLowerCase().includes(query))
         );
         
         renderDictionary(filtered);
     });
 
-    // Поиск / Фильтр по первой букве
+    // Фильтр по букве
     function filterByLetter(letter, buttonElement) {
         document.getElementById('searchInput').value = '';
         clearActiveButtons();
@@ -337,7 +366,7 @@
         renderDictionary(dictionary);
     }
 
-    // Первоначальный вывод всех слов
+    // Запуск
     renderDictionary(dictionary);
 </script>
 
