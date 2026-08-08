@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Официальный словарь Нуринамского языка</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .alphabet-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 25px;
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .letter-btn {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+
+        .letter-btn:hover, .letter-btn.active {
+            background-color: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        .letter-btn.reset {
+            background: #334155;
+            color: var(--text-main);
+        }
+
+        .dictionary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .word-card {
+            background-color: var(--card-bg);
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .word-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .word-translation {
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Официальный словарь Нуринамского языка</h1>
+        <p class="subtitle">Полная справочная система и алфавитный указатель</p>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Поиск по всему словарю (введите слово или перевод)...">
+    </div>
+
+    <div class="alphabet-bar" id="alphabetBar">
+        <button class="letter-btn reset" onclick="resetFilter()">Все</button>
+    </div>
+
+    <div class="dictionary-list" id="dictionaryList"></div>
+</div>
+
+<script>
+    // Алфавит
+    const alphabet = [
+        "А", "Ӑ", "Ꙗ", "Ћ", "V", "Г", "Ґ", "Ѓ", "Д", "Ԭ", 
+        "Ѥ", "Ѥ̆", "Ĭ", "Э", "Э̆", "З", "Ҙ", "Ж", "Җ", "Ӝ", 
+        "И", "Й", "J", "К", "Ҡ", "Q", "Ќ", "Л", "Љ", "М", 
+        "Н", "Ҥ", "Њ", "Ӈ", "О", "Ŏ", "Ю", "П", "Р", "Ṕ", 
+        "С", "Б", "Т", "Ҭ", "У", "Ў", "Ӯ", "Ф", "Х", "Ӿ", 
+        "Џ", "Ц", "Ҵ", "Ч", "Ҷ", "Ꚇ", "Ш", "Ш̆", "Щ", "Щ̆", 
+        "Ъ", "Ы", "Ꙑ", "Ы̆", "Ӹ", "Ь", "Ѣ", "Ъ̀", "Ԃ", "Һ", "Ԧ"
+    ];
+
+    // Пример базы данных слов (сюда можно добавлять свои слова)
+    const dictionary = [
+        { word: "Арам", translation: "Приветствие, мир" },
+        { word: "Ӑн", translation: "День, светлое время суток" },
+        { word: "Ꙗра", translation: "Земля, территория" },
+        { word: "Ћор", translation: "Город, столица" },
+        { word: "Vита", translation: "Жизнь, энергия" },
+        { word: "Гал", translation: "Река, вода" },
+        { word: "Дон", translation: "Дом, здание" },
+        { word: "Jор", translation: "Закон, правило" },
+        { word: "Qис", translation: "Ночь, темнота" },
+        { word: "Ш̆ум", translation: "Шелест ветра" }
+    ];
+
+    let selectedLetter = null;
+
+    // Рендер кнопок алфавита
+    const alphabetBar = document.getElementById('alphabetBar');
+    alphabet.forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'letter-btn';
+        btn.textContent = letter;
+        btn.onclick = () => filterByLetter(letter, btn);
+        alphabetBar.appendChild(btn);
+    });
+
+    // Функция отображения списка
+    function renderDictionary(data) {
+        const list = document.getElementById('dictionaryList');
+        list.innerHTML = '';
+
+        if (data.length === 0) {
+            list.innerHTML = '<div class="no-results">Слова не найдены</div>';
+            return;
+        }
+
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'word-card';
+            card.innerHTML = `
+                <div class="word-title">${item.word}</div>
+                <div class="word-translation">${item.translation}</div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    // Поиск по всему словарю (строка ввода)
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        // Сбрасываем выбор буквы при вводе текста
+        if (query) {
+            clearActiveLetterButtons();
+            selectedLetter = null;
+        }
+
+        const filtered = dictionary.filter(item => 
+            item.word.toLowerCase().includes(query) || 
+            item.translation.toLowerCase().includes(query)
+        );
+        renderDictionary(filtered);
+    });
+
+    // Поиск по первой букве
+    function filterByLetter(letter, buttonElement) {
+        document.getElementById('searchInput').value = '';
+        clearActiveLetterButtons();
+
+        if (selectedLetter === letter) {
+            selectedLetter = null;
+            renderDictionary(dictionary);
+        } else {
+            selectedLetter = letter;
+            buttonElement.classList.add('active');
+            
+            const filtered = dictionary.filter(item => 
+                item.word.startsWith(letter) || 
+                item.word.toUpperCase().startsWith(letter)
+            );
+            renderDictionary(filtered);
+        }
+    }
+
+    function clearActiveLetterButtons() {
+        document.querySelectorAll('.letter-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function resetFilter() {
+        document.getElementById('searchInput').value = '';
+        clearActiveLetterButtons();
+        selectedLetter = null;
+        renderDictionary(dictionary);
+    }
+
+    // Инициализация при загрузке
+    renderDictionary(dictionary);
+</script>
+
+</body>
+</html>
