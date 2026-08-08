@@ -244,7 +244,7 @@
 
     // База данных слов с описанием и формами изменения
     const dictionary = [
-         { 
+        { 
             word: "А", 
             translation: "Вы",
             description: "«Вы» — это местоимение второго лица во множественном числе, которое используется в русском языке для обращения к нескольким людям или в контексте вежливого обращения к одному человеку. В последнем случае, использование «Вы» с прописной буквы подчеркивает уважение и вежливость по отношению к собеседнику.",
@@ -256,7 +256,7 @@
             description: "Союз «а» в русском языке используется для соединения двух частей сложносочиненного предложения, где первая часть утверждает или сообщает что-то, а вторая часть, вводимая союзом «а», часто подчеркивает противопоставление или добавляет дополнительную информацию, которая контрастирует с предыдущей.",
             forms: "не изменяется"
         },
-         { 
+        { 
             word: "Аvгост", 
             translation: "Август",
             description: "Август — это восьмой месяц года в григорианском календаре. Он состоит из 31 дня. Название месяца происходит от латинского «Augustus», которое было дано в честь римского императора Октавиана Августа. В разных культурах и традициях август может иметь свои особенности и значения.",
@@ -292,7 +292,7 @@
             description: "Окно — это архитектурный элемент, представляющий собой проем в стене, который обычно заполняется стеклом. Окна служат для пропуска естественного света и вентиляции в помещениях, а также обеспечивают вид на улицу или окружающую природу.",
             forms: "мн.ч.: Акна | род.падеж: Акон | дат.падеж: Акну | вин.падеж: Акно | твор.падеж: Акном | пред.падеж: Акњѥ. Другие формы: Отсутсвуют."
         },
-         { 
+        { 
             word: "Акромњиj", 
             translation: "Огромный",
             description: "Огромный — это прилагательное, которое используется для описания чего-то очень большого по размеру, объему или количеству. Слово часто используется для акцентирования внимания на впечатляющих масштабах объектов, явлений или количеств.",
@@ -331,14 +331,10 @@
             return;
         }
 
-        // Сортировка по алфавиту
-        data.sort((a, b) => a.word.localeCompare(b.word));
-
         data.forEach(item => {
             const card = document.createElement('div');
             card.className = 'word-card';
             
-            // Проверка наличия дополнительных полей
             const descHtml = item.description ? `<div class="word-description">${item.description}</div>` : '';
             const formsHtml = item.forms ? `<div class="word-forms"><strong>Формы слова:</strong> ${item.forms}</div>` : '';
 
@@ -372,7 +368,7 @@
         renderDictionary(filtered);
     });
 
-    // Фильтр по букве
+    // Фильтр по первой букве (улучшенный)
     function filterByLetter(letter, buttonElement) {
         document.getElementById('searchInput').value = '';
         clearActiveButtons();
@@ -384,10 +380,11 @@
             activeLetter = letter;
             buttonElement.classList.add('active');
             
-            const filtered = dictionary.filter(item => 
-                item.word.startsWith(letter) || 
-                item.word.toUpperCase().startsWith(letter)
-            );
+            const target = letter.toLowerCase();
+            const filtered = dictionary.filter(item => {
+                const firstChar = item.word.trim().charAt(0).toLowerCase();
+                return firstChar === target;
+            });
             
             renderDictionary(filtered);
         }
@@ -414,4 +411,3 @@
 
 </body>
 </html>
-
