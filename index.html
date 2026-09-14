@@ -44,19 +44,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 36px;
-            position: relative;
-        }
-
-        header::after {
-            content: '';
-            display: block;
-            width: 60px;
-            height: 2px;
-            background: var(--accent);
-            margin: 20px auto 0 auto;
-            border-radius: 2px;
-            opacity: 0.6;
+            margin-bottom: 28px;
         }
 
         h1 {
@@ -76,6 +64,50 @@
             font-weight: 400;
         }
 
+        /* Навигация (Вкладки) */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-bright);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            background: var(--card-bg);
+            border-color: var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Словарь */
         .search-box {
             margin-bottom: 24px;
         }
@@ -213,13 +245,13 @@
             padding-left: 4px;
         }
 
-        .dictionary-list {
+        .dictionary-list, .rules-list {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        .word-card {
+        .word-card, .rule-card {
             background-color: var(--card-bg);
             padding: 24px;
             border-radius: 12px;
@@ -231,7 +263,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
-        .word-card:hover {
+        .word-card:hover, .rule-card:hover {
             border-color: #484f58;
             box-shadow: 0 6px 20px rgba(0,0,0,0.25);
             transform: translateY(-2px);
@@ -277,13 +309,13 @@
             font-weight: 600;
         }
 
-        .word-description {
+        .word-description, .rule-text {
             color: var(--text-main);
             font-size: 1rem;
             line-height: 1.6;
         }
 
-        .word-forms {
+        .word-forms, .rule-examples {
             background: var(--tag-bg);
             padding: 12px 16px;
             border-radius: 8px;
@@ -293,9 +325,36 @@
             line-height: 1.5;
         }
 
-        .word-forms strong {
+        .word-forms strong, .rule-examples strong {
             color: var(--text-bright);
             margin-right: 4px;
+        }
+
+        /* Оформление блоков правил */
+        .rule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .rule-title {
+            font-family: var(--font-serif);
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .rule-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: #21262d;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 20px;
         }
 
         .no-results {
@@ -314,30 +373,44 @@
 <div class="container">
     <header>
         <h1>Официальный словарь Нуринамского языка</h1>
-        <p class="subtitle">Полная справочная система, формы слов и алфавитный поиск</p>
+        <p class="subtitle">Полная справочная система, грамматика и алфавитный поиск</p>
     </header>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" class="search-input" placeholder="Поиск по словам, переводу или описанию...">
-    </div>
+    <!-- Переключатель страниц -->
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('dictionaryTab', this)">Словарь</button>
+        <button class="tab-btn" onclick="switchTab('rulesTab', this)">Правописание и правила</button>
+    </nav>
 
-    <div class="alphabet-section">
-        <div class="alphabet-title">Фильтр по первой букве:</div>
-        <div class="alphabet-bar" id="alphabetBar">
-            <button class="letter-btn reset-btn" onclick="resetFilter()">Все слова</button>
+    <!-- Вкладка 1: Словарь -->
+    <div id="dictionaryTab" class="tab-content active">
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Поиск по словам, переводу или описанию...">
         </div>
-        
-        <div class="letter-info-card" id="letterInfoCard">
-            <div class="letter-info-header" id="letterInfoHeader"></div>
-            <div class="letter-info-body" id="letterInfoBody"></div>
+
+        <div class="alphabet-section">
+            <div class="alphabet-title">Фильтр по первой букве:</div>
+            <div class="alphabet-bar" id="alphabetBar">
+                <button class="letter-btn reset-btn" onclick="resetFilter()">Все слова</button>
+            </div>
+            
+            <div class="letter-info-card" id="letterInfoCard">
+                <div class="letter-info-header" id="letterInfoHeader"></div>
+                <div class="letter-info-body" id="letterInfoBody"></div>
+            </div>
         </div>
+
+        <div class="status-bar" id="statusBar">
+            <span>Показаны все слова</span>
+        </div>
+
+        <div class="dictionary-list" id="dictionaryList"></div>
     </div>
 
-    <div class="status-bar" id="statusBar">
-        <span>Показаны все слова</span>
+    <!-- Вкладка 2: Правила -->
+    <div id="rulesTab" class="tab-content">
+        <div class="rules-list" id="rulesList"></div>
     </div>
-
-    <div class="dictionary-list" id="dictionaryList"></div>
 </div>
 
 <script>
@@ -353,7 +426,7 @@
     ];
 
     const letterDescriptions = {
-        "А": "1-я буква Нуринамского алфавита. Произошла от древнего символа головы быка в протосинайском письме (около 1800–1500 гг. до н. э.). Затем она стала финикийской буквой алеф (𐤀), позже — греческой альфой (Α), а от неё произошли латинская A и кириллическая А. Произносится как русская А.",
+         "А": "1-я буква Нуринамского алфавита. Произошла от древнего символа головы быка в протосинайском письме (около 1800–1500 гг. до н. э.). Затем она стала финикийской буквой алеф (𐤀), позже — греческой альфой (Α), а от неё произошли латинская A и кириллическая А. Произносится как русская А.",
         "Ă": "2-я буква Нуринамского алфавита. Была введена при создании нуринамского алфавита для обозначения звука «я». За основу была взята латинская буква A, к которой добавили бреве (˘), чтобы отличить её от обычной A. В нуринамском языке читается как «я» и является самостоятельной буквой алфавита.",
          "Ꙗ": "3-я буква Нуринамского алфавита. Была заимствована из старославянской письменности и используется для обозначения гласного звука «я» без начального [й]. Произносится как звук «я» в слове «мяч», где после согласного отсутствует отдельный звук [й]. Является самостоятельной буквой нуринамского алфавита.",
         "Ћ": "4-я буква Нуринамского алфавита. Используется для обозначения звука «б». Несмотря на свою форму, произносится так же, как русская буква Б. Является самостоятельной буквой нуринамского алфавита.",
@@ -427,9 +500,9 @@
         "Һ": "72-я буква Нуринамского алфавита. Һ — буква нуринамского алфавита, обозначающая звук «кл». Буква Һһ является самостоятельной буквой Нуринамского алфавита.",
         "Ԧ": "73-я буква Нуринамского алфавита. Ԧ — буква нуринамского алфавита, обозначающая звук «гл». Буква Ԧԧ является самостоятельной буквой Нуринамского алфавита.",
         "І": "74-я буква Нуринамского алфавита. І — буква нуринамского алфавита, обозначающая промежуточный гласный звук между «и» и «ы». Буква Іі является самостоятельной буквой Нуринамского алфавита. В алфавите появилась 21 Августа 2026 года."
-    };
+        };
 
-    // База данных слов (добавлено поле stress для ручного ввода ударений)
+    // База данных слов
     const dictionary = [
         { 
             word: "А", 
@@ -1418,7 +1491,7 @@
             description: "Она — личное местоимение третьего лица единственного числа женского рода. Указывает на лицо или предмет женского рода, не вовлечённый в прямой разговор. Используется, когда собеседник уже понимает, о ком или о чём идёт речь. Изменяется по падежам: её, ей, ею и др. Позволяет не повторять имена и существительные, делает высказывание компактнее. Может передавать разные оттенки — от нейтрального упоминания до эмоциональной окраски. Часто встречается в рассказах, описаниях, лирике.",
             forms: "мн.ч.: Йњи | род.падеж: Йй | дат.падеж: Йj | вин.падеж: Йŏ | твор.падеж: Йў | пред.падеж: Њѥj. Другие формы: Отсутствуют."
         },
-        { 
+{ 
             word: "Йњи", 
             stress: "Й́њи",
             translation: "Они",
@@ -1889,7 +1962,32 @@
         }
     ];
 
+    // База данных правил и правописания (можно свободно добавлять новые объекты)
+    const rules = [
+        {
+            title: "Употребление буквы Ă",
+            category: "Фонетика и графика",
+            text: "Буква Ă используется исключительно для передачи звука «я». Она является самостоятельной гласной буквой алфавита и не заменяется обычной буквой А при письме.",
+            examples: "Ăр (Яр), Ăма (Яма)"
+        },
+        {
+            title: "Правило вежливого обращения «А»",
+            category: "Местоимения",
+            text: "Местоимение второго лица «А» (Вы) пишется с прописной буквы во всех официальных документах и при уважительном обращении к одному лицу.",
+            examples: "Ашє (Ваше), Аш (Ваш)"
+        }
+    ];
+
     let activeLetter = null;
+
+    // Переключение между вкладками
+    function switchTab(tabId, btnElement) {
+        document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+        document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+        
+        document.getElementById(tabId).classList.add("active");
+        btnElement.classList.add("active");
+    }
 
     function renderAlphabet() {
         const bar = document.getElementById("alphabetBar");
@@ -1915,7 +2013,6 @@
             const card = document.createElement("div");
             card.className = "word-card";
 
-            // Отображаем строку с ударением, если она заполнена
             const stressHtml = item.stress ? `<div class="word-stress-line">Ударение: <span class="word-stress">${item.stress}</span></div>` : '';
 
             card.innerHTML = `
@@ -1926,6 +2023,34 @@
                 ${stressHtml}
                 <div class="word-description">${item.description}</div>
                 <div class="word-forms"><strong>Формы:</strong> ${item.forms}</div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    // Отрисовка раздела правил
+    function renderRules() {
+        const list = document.getElementById("rulesList");
+        list.innerHTML = "";
+
+        if (rules.length === 0) {
+            list.innerHTML = `<div class="no-results">Правила пока не добавлены</div>`;
+            return;
+        }
+
+        rules.forEach(rule => {
+            const card = document.createElement("div");
+            card.className = "rule-card";
+
+            const examplesHtml = rule.examples ? `<div class="rule-examples"><strong>Примеры:</strong> ${rule.examples}</div>` : '';
+
+            card.innerHTML = `
+                <div class="rule-header">
+                    <span class="rule-title">${rule.title}</span>
+                    <span class="rule-category">${rule.category}</span>
+                </div>
+                <div class="rule-text">${rule.text}</div>
+                ${examplesHtml}
             `;
             list.appendChild(card);
         });
@@ -1995,6 +2120,7 @@
     // Инициализация при загрузке
     renderAlphabet();
     renderDictionary(dictionary);
+    renderRules();
 </script>
 
 </body>
