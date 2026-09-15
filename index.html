@@ -107,7 +107,7 @@
             animation: fadeIn 0.3s ease-out;
         }
 
-        /* Словарь */
+        /* Поиск */
         .search-box {
             margin-bottom: 24px;
         }
@@ -385,7 +385,7 @@
     <!-- Вкладка 1: Словарь -->
     <div id="dictionaryTab" class="tab-content active">
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="Поиск по словам, переводу или описанию...">
+            <input type="text" id="searchInput" class="search-input" placeholder="Поиск по словам или переводу...">
         </div>
 
         <div class="alphabet-section">
@@ -409,6 +409,14 @@
 
     <!-- Вкладка 2: Правила -->
     <div id="rulesTab" class="tab-content">
+        <div class="search-box">
+            <input type="text" id="rulesSearchInput" class="search-input" placeholder="Поиск по названию правила или категории...">
+        </div>
+
+        <div class="status-bar" id="rulesStatusBar">
+            <span>Показаны все правила</span>
+        </div>
+
         <div class="rules-list" id="rulesList"></div>
     </div>
 </div>
@@ -426,9 +434,9 @@
     ];
 
     const letterDescriptions = {
-         "А": "1-я буква Нуринамского алфавита. Произошла от древнего символа головы быка в протосинайском письме (около 1800–1500 гг. до н. э.). Затем она стала финикийской буквой алеф (𐤀), позже — греческой альфой (Α), а от неё произошли латинская A и кириллическая А. Произносится как русская А.",
+        "А": "1-я буква Нуринамского алфавита. Произошла от древнего символа головы быка в протосинайском письме (около 1800–1500 гг. до н. э.). Затем она стала финикийской буквой алеф (𐤀), позже — греческой альфой (Α), а от неё произошли латинская A и кириллическая А. Произносится как русская А.",
         "Ă": "2-я буква Нуринамского алфавита. Была введена при создании нуринамского алфавита для обозначения звука «я». За основу была взята латинская буква A, к которой добавили бреве (˘), чтобы отличить её от обычной A. В нуринамском языке читается как «я» и является самостоятельной буквой алфавита.",
-         "Ꙗ": "3-я буква Нуринамского алфавита. Была заимствована из старославянской письменности и используется для обозначения гласного звука «я» без начального [й]. Произносится как звук «я» в слове «мяч», где после согласного отсутствует отдельный звук [й]. Является самостоятельной буквой нуринамского алфавита.",
+        "Ꙗ": "3-я буква Нуринамского алфавита. Была заимствована из старославянской письменности и используется для обозначения гласного звука «я» без начального [й]. Произносится как звук «я» в слове «мяч», где после согласного отсутствует отдельный звук [й]. Является самостоятельной буквой нуринамского алфавита.",
         "Ћ": "4-я буква Нуринамского алфавита. Используется для обозначения звука «б». Несмотря на свою форму, произносится так же, как русская буква Б. Является самостоятельной буквой нуринамского алфавита.",
         "V": "5-я буква Нуринамского алфавита. Используется для обозначения звука «в». Была заимствована из латинского алфавита и заменяет кириллическую букву В. Является самостоятельной буквой нуринамского алфавита.",
         "Г": "6-я буква Нуринамского алфавита. Используется для обозначения звука «г». Сохранила своё написание и произношение, аналогичные русской букве Г. Является самостоятельной буквой нуринамского алфавита.",
@@ -500,7 +508,7 @@
         "Һ": "72-я буква Нуринамского алфавита. Һ — буква нуринамского алфавита, обозначающая звук «кл». Буква Һһ является самостоятельной буквой Нуринамского алфавита.",
         "Ԧ": "73-я буква Нуринамского алфавита. Ԧ — буква нуринамского алфавита, обозначающая звук «гл». Буква Ԧԧ является самостоятельной буквой Нуринамского алфавита.",
         "І": "74-я буква Нуринамского алфавита. І — буква нуринамского алфавита, обозначающая промежуточный гласный звук между «и» и «ы». Буква Іі является самостоятельной буквой Нуринамского алфавита. В алфавите появилась 21 Августа 2026 года."
-        };
+    };
 
     // База данных слов
     const dictionary = [
@@ -1962,7 +1970,7 @@
         }
     ];
 
-    // База данных правил и правописания (можно свободно добавлять новые объекты)
+    // База данных правил и правописания
     const rules = [
         {
             title: "Употребление «Ѥ̆» как Вспомогательный Глагол",
@@ -2029,16 +2037,16 @@
     }
 
     // Отрисовка раздела правил
-    function renderRules() {
+    function renderRules(data) {
         const list = document.getElementById("rulesList");
         list.innerHTML = "";
 
-        if (rules.length === 0) {
-            list.innerHTML = `<div class="no-results">Правила пока не добавлены</div>`;
+        if (data.length === 0) {
+            list.innerHTML = `<div class="no-results">Правила не найдены</div>`;
             return;
         }
 
-        rules.forEach(rule => {
+        data.forEach(rule => {
             const card = document.createElement("div");
             card.className = "rule-card";
 
@@ -2076,24 +2084,23 @@
             infoCard.classList.remove("visible");
         }
 
-        applyFilters();
+        applyDictionaryFilters();
     }
 
     function resetFilter() {
         activeLetter = null;
         document.querySelectorAll(".letter-btn").forEach(b => b.classList.remove("active"));
         document.getElementById("letterInfoCard").classList.remove("visible");
-        applyFilters();
+        applyDictionaryFilters();
     }
 
-    function applyFilters() {
+    // Фильтрация словаря: ТОЛЬКО по word и translation
+    function applyDictionaryFilters() {
         const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
         let filtered = dictionary.filter(item => {
             const matchesSearch = item.word.toLowerCase().includes(query) ||
-                                  item.translation.toLowerCase().includes(query) ||
-                                  item.description.toLowerCase().includes(query) ||
-                                  (item.stress && item.stress.toLowerCase().includes(query));
+                                  item.translation.toLowerCase().includes(query);
 
             const matchesLetter = activeLetter ? item.word.startsWith(activeLetter) : true;
 
@@ -2101,10 +2108,23 @@
         });
 
         renderDictionary(filtered);
-        updateStatus(filtered.length);
+        updateDictionaryStatus(filtered.length);
     }
 
-    function updateStatus(count) {
+    // Фильтрация правил: ТОЛЬКО по title и category
+    function applyRulesFilters() {
+        const query = document.getElementById("rulesSearchInput").value.toLowerCase().trim();
+
+        let filtered = rules.filter(rule => {
+            return rule.title.toLowerCase().includes(query) ||
+                   rule.category.toLowerCase().includes(query);
+        });
+
+        renderRules(filtered);
+        updateRulesStatus(filtered.length);
+    }
+
+    function updateDictionaryStatus(count) {
         const status = document.getElementById("statusBar");
         if (activeLetter) {
             status.innerText = `Буква «${activeLetter}»: найдено слов — ${count}`;
@@ -2115,12 +2135,23 @@
         }
     }
 
-    document.getElementById("searchInput").addEventListener("input", applyFilters);
+    function updateRulesStatus(count) {
+        const status = document.getElementById("rulesStatusBar");
+        if (document.getElementById("rulesSearchInput").value.trim() !== "") {
+            status.innerText = `Результаты поиска: найдено правил — ${count}`;
+        } else {
+            status.innerText = `Показаны все правила (${count})`;
+        }
+    }
+
+    // Слушатели ввода для обоих полей поиска
+    document.getElementById("searchInput").addEventListener("input", applyDictionaryFilters);
+    document.getElementById("rulesSearchInput").addEventListener("input", applyRulesFilters);
 
     // Инициализация при загрузке
     renderAlphabet();
     renderDictionary(dictionary);
-    renderRules();
+    renderRules(rules);
 </script>
 
 </body>
